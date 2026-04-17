@@ -1,34 +1,28 @@
---- /tmp/a/SLSListenerHandler.cpp       2026-04-17 18:08:14.074847163 +0200
-+++ /tmp/b/SLSListenerHandler.cpp       2026-04-17 18:08:52.490542914 +0200
-@@ -107,12 +107,17 @@
-                      session_id, sid, peer_name, peer_port);
-     }
-
--    if (strlen(sid) == 0) {
--        spdlog::error("[{}] CSLSListener::handler, [{}:{:d}], fd={:d}, empty stream ID not allowed.", fmt::ptr(this), peer_name, peer_port, srt->libsrt_get_fd());
--        srt->libsrt_close();
--        delete srt;
--        return client_count;
--    }
-+       if (strlen(sid) == 0) {
-+               // fallback to default_sid if configured
-+               if (strlen(m_default_sid) > 0) {
-+                       strlcpy(sid, m_default_sid, SRT_STREAMID_SIZE);
-+               } else {
-+                       spdlog::error("[{}] CSLSListener::handler, [{}:{:d}], fd={:d}, empty stream ID not allowed.", fmt::ptr(this), peer_name, peer_port, srt->libsrt_get_fd());
-+                       srt->libsrt_close();
-+                       delete srt;
-+                       return client_count;
-+               }
-+       }
-
-     sid_kv = srt->libsrt_parse_sid(sid);
-     bool sidValid = true;
-@@ -767,4 +772,5 @@
-             ++it;
-         }
-     }
--}
-\ No newline at end of file
-+}
-+
+diff --git a/src/core/SLSListenerHandler.cpp b/src/core/SLSListenerHandler.cpp
+index 6c28d88..1d68731 100644
+--- a/src/core/SLSListenerHandler.cpp
++++ b/src/core/SLSListenerHandler.cpp
+@@ -107,12 +107,17 @@ int CSLSListener::handler()
+                      session_id, sid, peer_name, peer_port);^M
+     }^M
+ ^M
+-    if (strlen(sid) == 0) {^M
+-        spdlog::error("[{}] CSLSListener::handler, [{}:{:d}], fd={:d}, empty stream ID not allowed.", fmt::ptr(this), peer_name, peer_port, srt->libsrt_get_fd());^M
+-        srt->libsrt_close();^M
+-        delete srt;^M
+-        return client_count;^M
+-    }^M
++       if (strlen(sid) == 0) {^M
++               // fallback to default_sid if configured^M
++               if (strlen(m_default_sid) > 0) {^M
++                       strlcpy(sid, m_default_sid, SRT_STREAMID_SIZE);^M
++               } else {^M
++                       spdlog::error("[{}] CSLSListener::handler, [{}:{:d}], fd={:d}, empty stream ID not allowed.", fmt::ptr(this), peer_name, peer_port, srt->libsrt_get_fd());^M
++                       srt->libsrt_close();^M
++                       delete srt;^M
++                       return client_count;^M
++               }^M
++       }^M
+ ^M
+     sid_kv = srt->libsrt_parse_sid(sid);^M
+     bool sidValid = true;^M
