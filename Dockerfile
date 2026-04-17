@@ -42,6 +42,10 @@ RUN find /tmp/srtla/build -name srtla_rec
 # Switch to the sls repository directory
 WORKDIR /tmp/srt-live-server
 
+# Apply default_sid fallback patch
+COPY files/default_sid.patch /tmp/
+RUN patch -p1 < /tmp/default_sid.patch
+
 RUN git submodule update --init && \
     mkdir build && cd build && \
     cmake ../ -DCMAKE_BUILD_TYPE=Release && \
