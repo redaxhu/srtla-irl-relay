@@ -15,7 +15,7 @@ index 6c28d88..1d68731 100644
 +       if (strlen(sid) == 0) {^M
 +               // fallback to default_sid if configured^M
 +               if (strlen(m_default_sid) > 0) {^M
-+                       strlcpy(sid, m_default_sid, SRT_STREAMID_SIZE);^M
++                       strlcpy(sid, m_default_sid, 1024);^M
 +               } else {^M
 +                       spdlog::error("[{}] CSLSListener::handler, [{}:{:d}], fd={:d}, empty stream ID not allowed.", fmt::ptr(this), peer_name, peer_port, srt->libsrt_get_fd());^M
 +                       srt->libsrt_close();^M
